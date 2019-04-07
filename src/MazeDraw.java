@@ -3,10 +3,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
-class MazeMake extends JPanel
+class MazeDraw extends JPanel
 {
   private MazeGrid maze;
-  public MazeMake()
+  public MazeDraw()
   {
     maze = new MazeGrid(10,10); // make 10x10 maze
   }

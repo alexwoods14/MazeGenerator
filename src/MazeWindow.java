@@ -8,7 +8,7 @@ public class MazeWindow extends JFrame{
     setSize(1000, 1000);
     setLocationRelativeTo(null);        
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    add(new MazeMake());
+    add(new MazeDraw());
 
   }
 }
