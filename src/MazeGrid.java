@@ -39,15 +39,11 @@ public class MazeGrid
         map[i][j] = new MazeCell(true);
 
     Coordinate start;
-    Coordinate end;
 
     start = this.genStart();
-    // end = this.genEnd(start);
     setIsWall(start, false);
-    // setIsWall(end, false);
 
     System.out.println("Start: " + start);
-    // System.out.println("End:   " + end);
   }
 
   private Coordinate genStart()
@@ -62,27 +58,6 @@ public class MazeGrid
       return new Coordinate(rand.nextInt(width), 0); // bottom edge
     else // starts from right
       return new Coordinate(width - 1, rand.nextInt(height)); // right edge
-
-  }
-
-  private Coordinate genEnd(Coordinate start)
-  {
-    Random rand = new Random();
-    Coordinate end;
-    double randVal = rand.nextDouble();
-    if(randVal < 0.25) // starts from top
-      end = new Coordinate(rand.nextInt(width), height - 1); // top edge
-    else if(randVal < 0.5)  // starts from left
-      end = new Coordinate(0, rand.nextInt(height)); // left edge
-    else if(randVal < 0.75)  // starts from bottom
-      end = new Coordinate(rand.nextInt(width), 0); // bottom edge
-    else // starts from right
-      end = new Coordinate(width - 1, rand.nextInt(height)); // right edge
-
-    if(!end.equals(start))
-      return end;
-    else
-      return genEnd(start);
 
   }
 
