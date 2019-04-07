@@ -4,6 +4,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
 
+import java.util.Set;
+import java.util.HashSet;
+
 public class MazeGrid
 {
   private MazeCell[][] map;
@@ -34,6 +37,7 @@ public class MazeGrid
 
   public void createMaze()
   {
+    Set<Coordinate> visited = new HashSet<Coordinate>();
     for(int i = 0; i < width; i++)
       for(int j = 0; j < height; j++)
         map[i][j] = new MazeCell(true);
@@ -42,8 +46,18 @@ public class MazeGrid
 
     start = this.genStart();
     setIsWall(start, false);
-
+    visited.add(start);
     System.out.println("Start: " + start);
+
+    Coordinate next = start.getLeft();
+    setIsWall(next, false);
+    next = next.getAbove();
+    setIsWall(next, false);
+    next = next.getAbove();
+    setIsWall(next, false);
+    next = next.getRight();
+    setIsWall(next, false);
+
   }
 
   private Coordinate genStart()
@@ -69,7 +83,7 @@ public class MazeGrid
           g2d.setColor(Color.BLACK);
         else
           g2d.setColor(Color.WHITE);
-        g2d.fillRect(i*100, j*100, 100, 100);
+        g2d.fillRect(i*50, (height - j - 1)*50, 50, 50); // (0,0) = bottom left
       }
 
   }
