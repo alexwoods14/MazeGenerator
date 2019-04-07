@@ -2,6 +2,7 @@ import java.util.Random;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Color;
 
 public class MazeGrid
 {
@@ -35,16 +36,18 @@ public class MazeGrid
   {
     for(int i = 0; i < width; i++)
       for(int j = 0; j < height; j++)
-        map[i][j] = new MazeCell(false);
+        map[i][j] = new MazeCell(true);
 
     Coordinate start;
     Coordinate end;
 
     start = this.genStart();
-    end = this.genEnd(start);
+    // end = this.genEnd(start);
+    setIsWall(start, false);
+    // setIsWall(end, false);
 
     System.out.println("Start: " + start);
-    System.out.println("End:   " + end);
+    // System.out.println("End:   " + end);
   }
 
   private Coordinate genStart()
@@ -52,13 +55,13 @@ public class MazeGrid
     Random rand = new Random();
     double randVal = rand.nextDouble();
     if(randVal < 0.25) // starts from top
-      return new Coordinate(rand.nextInt(width), height); // top edge
+      return new Coordinate(rand.nextInt(width), height - 1); // top edge
     else if(randVal < 0.5)  // starts from left
       return new Coordinate(0, rand.nextInt(height)); // left edge
     else if(randVal < 0.75)  // starts from bottom
       return new Coordinate(rand.nextInt(width), 0); // bottom edge
     else // starts from right
-      return new Coordinate(width, rand.nextInt(height)); // right edge
+      return new Coordinate(width - 1, rand.nextInt(height)); // right edge
 
   }
 
@@ -68,31 +71,31 @@ public class MazeGrid
     Coordinate end;
     double randVal = rand.nextDouble();
     if(randVal < 0.25) // starts from top
-      end = new Coordinate(rand.nextInt(width), height); // top edge
+      end = new Coordinate(rand.nextInt(width), height - 1); // top edge
     else if(randVal < 0.5)  // starts from left
       end = new Coordinate(0, rand.nextInt(height)); // left edge
     else if(randVal < 0.75)  // starts from bottom
       end = new Coordinate(rand.nextInt(width), 0); // bottom edge
     else // starts from right
-      end = new Coordinate(width, rand.nextInt(height)); // right edge
+      end = new Coordinate(width - 1, rand.nextInt(height)); // right edge
 
     if(!end.equals(start))
       return end;
     else
-    {
-      setIsWall(start, true);
-      setIsWall(end, true);
       return genEnd(start);
-    }
 
   }
 
   public void draw(Graphics2D g2d){
-    System.out.println("here");
 		for(int i = 0; i < width; i++)
 			for(int j = 0; j < height; j++)
+      {
         if(map[i][j].isWall())
-          g2d.fillRect(i*100, j*100, 100, 100);
-  }
+          g2d.setColor(Color.BLACK);
+        else
+          g2d.setColor(Color.WHITE);
+        g2d.fillRect(i*100, j*100, 100, 100);
+      }
 
+  }
 } // MazeGrid

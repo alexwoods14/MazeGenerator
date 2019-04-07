@@ -17,10 +17,9 @@ class MazeDraw extends JPanel
     super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
   	g2d.setColor(Color.white);
-		g2d.fillRect(0, 0, 1000, 1000);
     g2d.setColor(Color.BLACK);
     maze.draw(g2d);
     
-    repaint();
+    //repaint();
   }
 }
