@@ -17,19 +17,21 @@ public class MazeGrid
 
   public MazeGrid(int width, int height)
   {
-    this.width = width;
-    this.height = height;
-    if(width % 2 != 0)
-      width += 1;
-    if(height % 2 != 0)
-      height += 1;
+    if(height % 2 == 0)
+      this.width = width + 1;
+    else
+      this.width = width;
+    if(width % 2 == 0)
+      this.height = height + 1;
+    else
+      this.height = height;
 
     map = new MazeCell[this.width][this.height];
 
     visited = new HashSet<Coordinate>();
     
-    for(int i = 0; i < width; i++)
-      for(int j = 0; j < height; j++)
+    for(int i = 0; i < this.width; i++)
+      for(int j = 0; j < this.height; j++)
         map[i][j] = new MazeCell(true);
     
     createMaze();
@@ -216,6 +218,7 @@ public class MazeGrid
 		for(int i = 0; i < width; i++)
 			for(int j = 0; j < height; j++)
       {
+
         temp = new Coordinate(i,j);
         
         g2d.setColor(Color.BLACK);
@@ -224,6 +227,10 @@ public class MazeGrid
           g2d.setColor(Color.GRAY);
         if(!map[i][j].isWall())
           g2d.setColor(Color.WHITE);
+        if(i == 0 && j == 0)
+          g2d.setColor(Color.GREEN);
+        else if(i == width - 1 && j == height - 1)
+          g2d.setColor(Color.RED);
         
         g2d.fillRect(i*10, (height - j - 1)*10, 10, 10);
       }
