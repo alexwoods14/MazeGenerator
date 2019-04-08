@@ -8,7 +8,7 @@ class MazeDraw extends JPanel
   private MazeGrid maze;
   public MazeDraw()
   {
-    maze = new MazeGrid(10,10); // make 10x10 maze
+    maze = new MazeGrid(50,50); // make an X*Y maze
   }
   
   @Override

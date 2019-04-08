@@ -13,13 +13,24 @@ public class MazeGrid
   private final int width;
   private final int height;
   private Set<Coordinate> visited;
+  private Tree<Coordinate> fullRoute;
 
-  public MazeGrid(int x, int y)
+  public MazeGrid(int width, int height)
   {
-    map = new MazeCell[x][y];
-    width = x;
-    height = y;
+    this.width = width;
+    this.height = height;
+    if(width % 2 != 0)
+      width += 1;
+    if(height % 2 != 0)
+      height += 1;
+
+    map = new MazeCell[this.width][this.height];
+
     visited = new HashSet<Coordinate>();
+    
+    for(int i = 0; i < width; i++)
+      for(int j = 0; j < height; j++)
+        map[i][j] = new MazeCell(true);
     
     createMaze();
   }
@@ -40,29 +51,37 @@ public class MazeGrid
 
   public void createMaze()
   {
-    
-    for(int i = 0; i < width; i++)
-      for(int j = 0; j < height; j++)
-        map[i][j] = new MazeCell(true);
 
     Coordinate start;
 
     //start = this.genStart();
     start = new Coordinate(0,0);
     setIsWall(start, false);
-    visited.add(start);
 
-    System.out.println("Start: " + start);
+    visited.add(start);
+    fullRoute = new Tree<Coordinate>(start, null);
 
     Coordinate next;
 
     next = nextLocation(start);
+    Tree<Coordinate> currentRoute = fullRoute.addChild(next);
 
-    System.out.println(visited.size());
-
-    while(visited.size() < 50)
+    while(true)
     {
       next = nextLocation(next);
+      if(next == null)
+      {
+        currentRoute = backtrack(currentRoute);
+        if(currentRoute.getValue().equals(start))
+        {
+          System.out.println("Generated");
+          break;
+        }
+        else
+          next = nextLocation(currentRoute.getValue());
+      }
+      else
+        currentRoute = currentRoute.addChild(next);
     }
   }
 
@@ -72,95 +91,64 @@ public class MazeGrid
       return null;
 
     Coordinate buffer;
+    Coordinate buffer2;
     Random rand = new Random();
     double randVal = rand.nextDouble();
     if(randVal < 0.25) // try left
     {
       buffer = current.getLeft();
-      if(visit(buffer)) // not been visited yet
+      buffer2 = buffer.getLeft();
+      if(visit(buffer2)) // not been visited yet
       {
-        if(setIsWall(buffer, false))
-        {
-          //visit(current.getLeft());
-          //visit(current.getRight());
-          visit(current.getAbove());
-          visit(current.getBelow());
-          return buffer;
-        }
+        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
+          return buffer2;
         else
           return nextLocation(current);
       }
       else
-      {
-        System.out.println("already been there");
         return nextLocation(current);
-      }
     }
     else if(randVal < 0.5) // try right
     {
       buffer = current.getRight();
-      if(visit(buffer)) // not been visited yet
+      buffer2 = buffer.getRight();
+      if(visit(buffer2)) // not been visited yet
       {
-        if(setIsWall(buffer, false))
-        {
-          //visit(current.getLeft());
-          //visit(current.getRight());
-          visit(current.getAbove());
-          visit(current.getBelow());
-          return buffer;
-        }
+        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
+          return buffer2;
         else
           return nextLocation(current);
       }
       else
-      {
-        System.out.println("already been there");
         return nextLocation(current);
-      }
     }
     else if(randVal < 0.75) // above
     {
       buffer = current.getAbove();
-      if(visit(buffer)) // not been visited yet
+      buffer2 = buffer.getAbove();
+      if(visit(buffer2)) // not been visited yet
       {
-        if(setIsWall(buffer, false))
-        {
-          visit(current.getLeft());
-          visit(current.getRight());
-          //visit(current.getAbove());
-          //visit(current.getBelow());
-          return buffer;
-        }
+        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
+          return buffer2;
         else
           return nextLocation(current);
       }
       else
-      {
-        System.out.println("already been there");
         return nextLocation(current);
-      }
     }
     else // below
     {
       buffer = current.getBelow();
-      if(visit(buffer)) // not been visited yet
+      buffer2 = buffer.getBelow();
+      if(visit(buffer2)) // not been visited yet
       {
-        if(setIsWall(buffer, false))
-        {
-          visit(current.getLeft());
-          visit(current.getRight());
-          //visit(current.getAbove());
-          //visit(current.getBelow());
-          return buffer;
-        }
+        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
+          return buffer2;
         else
           return nextLocation(current);
       }
       else
-      {
-        System.out.println("already been there");
         return nextLocation(current);
-      }
     }
   }
 
@@ -182,7 +170,29 @@ public class MazeGrid
 
   private boolean canMove(Coordinate current)
   {
+    Coordinate adjacent;
+    if(isPossible((adjacent = current.getLeft().getLeft())) &&
+                     !visited.contains(adjacent))
+      return true;
+    if(isPossible((adjacent = current.getRight().getRight())) &&
+                      !visited.contains(adjacent))
+      return true;
+    if(isPossible((adjacent = current.getAbove().getAbove())) &&
+                      !visited.contains(adjacent))
+      return true;
+    if(isPossible((adjacent = current.getBelow().getBelow())) &&
+                      !visited.contains(adjacent))
+      return true;
+
+    return false;    
+  }
+
+  private Tree<Coordinate> backtrack(Tree<Coordinate> start)
+  {
+    while(start.getParent() != null && !canMove(start.getValue()))
+      return backtrack(start.getParent());
     
+    return start;
   }
 
 
@@ -215,7 +225,7 @@ public class MazeGrid
         if(!map[i][j].isWall())
           g2d.setColor(Color.WHITE);
         
-        g2d.fillRect(i*50, (height - j - 1)*50, 50, 50);
+        g2d.fillRect(i*10, (height - j - 1)*10, 10, 10);
       }
 
   }
