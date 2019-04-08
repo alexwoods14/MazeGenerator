@@ -6,9 +6,10 @@ import javax.swing.JPanel;
 class MazeDraw extends JPanel
 {
   private MazeGrid maze;
+
   public MazeDraw()
   {
-    maze = new MazeGrid(96,54); // make an X*Y maze
+    maze = new MazeGrid(30,30); // make an X*Y maze
   }
   
   @Override
@@ -18,8 +19,21 @@ class MazeDraw extends JPanel
 		Graphics2D g2d = (Graphics2D) g;
   	g2d.setColor(Color.white);
     g2d.setColor(Color.BLACK);
-    maze.draw(g2d);
+    g2d.fillRect(0,0,96*10,54*10);
     
-    //repaint();
+    if(!maze.isDone())
+    {
+      maze.step();
+      try
+      {
+        Thread.sleep(100);
+      }
+      catch(InterruptedException ex)
+      {
+        Thread.currentThread().interrupt();
+      }
+      maze.draw(g2d);
+      repaint();
+    }
   }
 }

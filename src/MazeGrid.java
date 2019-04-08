@@ -13,7 +13,16 @@ public class MazeGrid
   private final int width;
   private final int height;
   private Set<Coordinate> visited;
+ 
   private Tree<Coordinate> fullRoute;
+  private Tree<Coordinate> currentRoute;
+  private boolean genFinished = false;
+
+  private Coordinate start;
+  private Coordinate next;
+  private boolean boxxedIn;
+
+
 
   public MazeGrid(int width, int height)
   {
@@ -34,7 +43,22 @@ public class MazeGrid
       for(int j = 0; j < this.height; j++)
         map[i][j] = new MazeCell(true);
     
-    createMaze();
+
+    start = new Coordinate(0,0);
+    setIsWall(start, false);
+
+    visited.add(start);
+    fullRoute = new Tree<Coordinate>(start, null);
+
+
+    next = nextLocation(start);
+    currentRoute = fullRoute.addChild(next);
+    boxxedIn = false;
+  }
+
+  public boolean isDone()
+  {
+    return genFinished;
   }
 
   private boolean setIsWall(Coordinate coord, boolean isWall)
@@ -51,46 +75,43 @@ public class MazeGrid
     }
   }
 
-  public void createMaze()
+  private void setBoxxedIn(Coordinate coord)
   {
+    map[coord.getX()][coord.getY()].finalPath();
+  }
 
-    Coordinate start;
-
+  public void step()
+  {
     //start = this.genStart();
-    start = new Coordinate(0,0);
-    setIsWall(start, false);
-
-    visited.add(start);
-    fullRoute = new Tree<Coordinate>(start, null);
-
-    Coordinate next;
-
-    next = nextLocation(start);
-    Tree<Coordinate> currentRoute = fullRoute.addChild(next);
-
-    while(true)
+    if(!boxxedIn)
     {
       next = nextLocation(next);
-      if(next == null)
+      currentRoute = currentRoute.addChild(next);
+    }
+    else
+    {
+      currentRoute = currentRoute.getParent();
+      setBoxxedIn(currentRoute.getValue());
+      if(currentRoute.getValue().equals(start))
       {
-        currentRoute = backtrack(currentRoute);
-        if(currentRoute.getValue().equals(start))
-        {
-          System.out.println("Generated");
-          break;
-        }
-        else
-          next = nextLocation(currentRoute.getValue());
+        System.out.println("Generated");
+        genFinished = true;
       }
       else
-        currentRoute = currentRoute.addChild(next);
+        next = nextLocation(currentRoute.getValue());
     }
   }
 
   private Coordinate nextLocation(Coordinate current)
   {
     if(!canMove(current))
+    {
+      boxxedIn = true;
       return null;
+    }
+    else
+      boxxedIn = false;
+
 
     Coordinate buffer;
     Coordinate buffer2;
@@ -226,13 +247,21 @@ public class MazeGrid
         if(visited.contains(temp))
           g2d.setColor(Color.GRAY);
         if(!map[i][j].isWall())
-          g2d.setColor(Color.WHITE);
+        {
+          if(map[i][j].isFinalPath())
+            g2d.setColor(Color.WHITE);
+          else
+            g2d.setColor(Color.GRAY);
+        }
+
+
         if(i == 0 && j == 0)
           g2d.setColor(Color.GREEN);
+
         else if(i == width - 1 && j == height - 1)
           g2d.setColor(Color.RED);
         
-        g2d.fillRect(i*10, (height - j - 1)*10, 10, 10);
+        g2d.fillRect(i*17, (height - j - 1)*17, 17, 17);
       }
 
   }

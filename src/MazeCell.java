@@ -7,6 +7,8 @@
 public class MazeCell
 {
   private boolean wall;
+  private boolean finalPath;
+
   public MazeCell(boolean wall)
   {   
     this.wall = wall;
@@ -20,5 +22,16 @@ public class MazeCell
   public void setIsWall(boolean wall) throws Exception
   {
     this.wall = wall;
+  }
+
+  public void finalPath()
+  {
+    System.out.println("here");
+    finalPath = true;
+  }
+
+  public boolean isFinalPath()
+  {
+    return finalPath;
   }
 } // MazeCell
