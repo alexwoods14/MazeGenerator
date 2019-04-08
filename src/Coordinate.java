@@ -39,14 +39,29 @@ public class Coordinate
     return y;
   }
 
-  public boolean equals(Coordinate other)
+  @Override
+  public boolean equals(Object o)
   {
-    return (other.getX() == x && other.getY() == y);
+    if(o == this)
+      return true;
+
+    if(!(o instanceof Coordinate))
+      return false;
+
+    Coordinate c = (Coordinate)o;
+    return (c.getX() == x && c.getY() == y);
   }
 
+  @Override
   public String toString()
   {
     return String.format("(%2d, %2d)", x, y); 
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return (int)(Math.pow(2.0,x) * Math.pow(3.0,y));
   }
 
 } // Coordinate
