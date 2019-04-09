@@ -3,14 +3,32 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
+/**
+ * This initialises the GUI and is where all the GUI drawing is handled
+ *
+ * @author Alex Woods
+ */
 class MazeDraw extends JPanel
 {
   private MazeGrid maze;
-  public MazeDraw(int x, int y)
+
+  /** 
+   * Creates a new maze
+   *
+   * @param width width of the maze
+   * @param height height of the maze
+   */
+  public MazeDraw(int width, int height)
   {
-    maze = new MazeGrid(x, y); // make an X*Y maze
+    maze = new MazeGrid(width, height); // make a maze of size width*height
   }
-  
+
+  /** 
+   * Override from Graphics. Handles all the things that should happen between
+   * repaints
+   *
+   * @param g Instance of Graphics to use
+   */
   @Override
   public void paintComponent(Graphics g)
   {
