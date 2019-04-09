@@ -17,16 +17,13 @@ class MazeDraw extends JPanel
   {
     super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-  	g2d.setColor(Color.white);
-    g2d.setColor(Color.BLACK);
-    g2d.fillRect(0,0,96*10,54*10);
     
     if(!maze.isDone())
     {
       maze.step();
       try
       {
-        Thread.sleep(100);
+        Thread.sleep(50);
       }
       catch(InterruptedException ex)
       {
@@ -35,5 +32,6 @@ class MazeDraw extends JPanel
       maze.draw(g2d);
       repaint();
     }
+    maze.draw(g2d);
   }
 }

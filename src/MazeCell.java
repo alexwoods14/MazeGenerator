@@ -26,7 +26,6 @@ public class MazeCell
 
   public void finalPath()
   {
-    System.out.println("here");
     finalPath = true;
   }
 
