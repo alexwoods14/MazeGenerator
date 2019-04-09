@@ -37,6 +37,11 @@ public class MazeGrid
     createMaze();
   }
 
+  public Tree<Coordinate> getFullMap()
+  {
+    return fullRoute;
+  }
+
   private boolean setIsWall(Coordinate coord, boolean isWall)
   {
     try
@@ -54,10 +59,7 @@ public class MazeGrid
   public void createMaze()
   {
 
-    Coordinate start;
-
-    //start = this.genStart();
-    start = new Coordinate(0,0);
+    Coordinate start = new Coordinate(0,0);
     setIsWall(start, false);
 
     visited.add(start);
