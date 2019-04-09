@@ -21,7 +21,7 @@ public class MazeGenerator {
     try
     {
       width = Integer.parseInt(args[0]); 
-      heigh = Integer.parseInt(args[1]);
+      height = Integer.parseInt(args[1]);
       MazeWindow maze = new MazeWindow(width, height);
       maze.setVisible(true);
     }
