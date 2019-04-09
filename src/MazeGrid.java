@@ -15,6 +15,10 @@ public class MazeGrid
   private Set<Coordinate> visited;
   private Tree<Coordinate> fullRoute;
 
+  private enum Directions{
+    LEFT, RIGHT, UP, DOWN
+  }
+ 
   public MazeGrid(int width, int height)
   {
     if(height % 2 == 0)
@@ -58,99 +62,130 @@ public class MazeGrid
 
   public void createMaze()
   {
-
+    boolean boxxedIn = false;
+    boolean newMove = false;
+  
     Coordinate start = new Coordinate(0,0);
-    setIsWall(start, false);
-
     visited.add(start);
+    setIsWall(start, false);
     fullRoute = new Tree<Coordinate>(start, null);
+    
+    
+    Directions direction;
 
-    Coordinate next;
+    direction = nextLocation(start);
+    Coordinate next = move(start, direction);
 
-    next = nextLocation(start);
     Tree<Coordinate> currentRoute = fullRoute.addChild(next);
+    setIsWall(next, false);
+    visit(next);
+
 
     while(true)
     {
-      next = nextLocation(next);
-      if(next == null)
+      ////
+      if(!boxxedIn)
+      {
+        if(newMove)
+        {
+          direction = nextLocation(next);
+          if(direction == null)
+            boxxedIn = true;
+          else
+            next = move(next, direction);
+          newMove = false;
+        }
+        else
+        {
+          next = move(next, direction);
+          newMove = true;
+        }
+        setIsWall(next, false);
+        visit(next);
+        currentRoute = currentRoute.addChild(next);
+      }
+      else
       {
         currentRoute = backtrack(currentRoute);
-        if(currentRoute.getValue().equals(start))
+        if(next.equals(start))
         {
           System.out.println("Generated");
           break;
         }
-        else
-          next = nextLocation(currentRoute.getValue());
+        next = currentRoute.getValue();
+        boxxedIn = false;
+        newMove = true;
       }
-      else
-        currentRoute = currentRoute.addChild(next);
     }
   }
 
-  private Coordinate nextLocation(Coordinate current)
+  private Coordinate move(Coordinate current, Directions direction)
+  {
+    Coordinate next = null;
+    switch(direction)
+    {
+      case LEFT:  next = current.getLeft();
+                  visit(current.getLeft());
+                  visit(current.getRight());
+                  visit(current.getAbove());
+                  visit(current.getBelow());
+                  break;
+      case RIGHT: next = current.getRight();
+                  visit(current.getLeft());
+                  visit(current.getRight());
+                  visit(current.getAbove());
+                  visit(current.getBelow());
+                  break;
+      case UP:    next = current.getAbove();
+                  visit(current.getLeft());
+                  visit(current.getRight());
+                  visit(current.getAbove());
+                  visit(current.getBelow());
+                  break;
+      case DOWN:  next = current.getBelow();
+                  visit(current.getLeft());
+                  visit(current.getRight());
+                  visit(current.getAbove());
+                  visit(current.getBelow());
+                  break;
+    }
+    return next;
+  }
+
+  private Directions nextLocation(Coordinate current)
   {
     if(!canMove(current))
+    {
       return null;
+    }
 
-    Coordinate buffer;
-    Coordinate buffer2;
     Random rand = new Random();
     double randVal = rand.nextDouble();
     if(randVal < 0.25) // try left
     {
-      buffer = current.getLeft();
-      buffer2 = buffer.getLeft();
-      if(visit(buffer2)) // not been visited yet
-      {
-        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
-          return buffer2;
-        else
-          return nextLocation(current);
-      }
+      if(isValid(Directions.LEFT, current))
+        return(Directions.LEFT);
       else
         return nextLocation(current);
     }
     else if(randVal < 0.5) // try right
     {
-      buffer = current.getRight();
-      buffer2 = buffer.getRight();
-      if(visit(buffer2)) // not been visited yet
-      {
-        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
-          return buffer2;
-        else
-          return nextLocation(current);
-      }
+      if(isValid(Directions.RIGHT, current))
+        return(Directions.RIGHT);
       else
         return nextLocation(current);
     }
     else if(randVal < 0.75) // above
     {
-      buffer = current.getAbove();
-      buffer2 = buffer.getAbove();
-      if(visit(buffer2)) // not been visited yet
-      {
-        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
-          return buffer2;
-        else
-          return nextLocation(current);
-      }
+      if(isValid(Directions.UP, current))
+        return(Directions.UP);
       else
         return nextLocation(current);
     }
     else // below
     {
-      buffer = current.getBelow();
-      buffer2 = buffer.getBelow();
-      if(visit(buffer2)) // not been visited yet
-      {
-        if(setIsWall(buffer, false) && setIsWall(buffer2, false))
-          return buffer2;
-        else
-          return nextLocation(current);
-      }
+      if(isValid(Directions.DOWN, current))
+        return(Directions.DOWN);
       else
         return nextLocation(current);
     }
@@ -190,6 +225,28 @@ public class MazeGrid
 
     return false;    
   }
+  
+  private boolean isValid(Directions d, Coordinate c)
+  {
+    boolean possible = false;
+    Coordinate adjacent;
+    switch(d)
+    {
+      case LEFT:  possible = isPossible((adjacent = c.getLeft().getLeft())) &&
+                     !visited.contains(adjacent);
+                  break;
+      case RIGHT: possible = isPossible((adjacent = c.getRight().getRight())) &&
+                     !visited.contains(adjacent);
+                  break;
+      case UP:    possible = isPossible((adjacent = c.getAbove().getAbove())) &&
+                     !visited.contains(adjacent);
+                  break;
+      case DOWN:  possible = isPossible((adjacent = c.getBelow().getBelow())) &&
+                     !visited.contains(adjacent);
+                  break;
+    }
+    return possible;
+  }
 
   private Tree<Coordinate> backtrack(Tree<Coordinate> start)
   {
@@ -225,8 +282,6 @@ public class MazeGrid
         
         g2d.setColor(Color.BLACK);
 
-        if(visited.contains(temp))
-          g2d.setColor(Color.GRAY);
         if(!map[i][j].isWall())
           g2d.setColor(Color.WHITE);
         if(i == 0 && j == 0)

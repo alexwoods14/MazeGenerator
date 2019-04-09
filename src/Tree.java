@@ -30,6 +30,4 @@ public class Tree<T>
   {
     return value;
   }
-
-   
 } // Tree
