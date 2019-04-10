@@ -7,6 +7,8 @@
 public class MazeCell
 {
   private boolean wall;
+  private boolean onRoute;
+  private boolean visited;
 
   /** 
    * Creates a new cell.
@@ -16,6 +18,8 @@ public class MazeCell
   public MazeCell(boolean wall)
   {   
     this.wall = wall;
+    onRoute = false;
+    visited = false;
   }
 
   /**
@@ -36,5 +40,43 @@ public class MazeCell
   public void setIsWall(boolean wall)
   {
     this.wall = wall;
+  }
+
+  /**
+   * Sets if it on the current solution route
+   *
+   * @param onRoute is it on route
+   */
+  public void setOnRoute(boolean onRoute)
+  {
+    this.onRoute = onRoute;
+  }
+
+  /**
+   * Call if this cell has been explored as a solution
+   */
+  public void setVisited()
+  {
+    this.visited = true;
+  }
+
+  /**
+   * Accesor method for onRoute
+   *
+   * @return is it on the current solution route
+   */
+  public boolean isOnRoute()
+  {
+    return onRoute;
+  }
+  
+  /**
+   * Accessor method for visited
+   *
+   * @return If this cell has been visited/passed through on solving
+   */
+  public boolean isVisited()
+  {
+    return visited;
   }
 } // MazeCell
