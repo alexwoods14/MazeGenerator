@@ -3,6 +3,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
+import java.util.Date;
+
 /**
  * This initialises the GUI and is where all the GUI drawing is handled
  *
@@ -20,7 +22,10 @@ class MazeDraw extends JPanel
    */
   public MazeDraw(int width, int height)
   {
+    Date before = new Date();
     maze = new MazeGrid(width, height); // make a maze of size width*height
+    Date after = new Date();
+    System.out.println("Time taken = " + (after.getTime() - before.getTime())/1000.0 + " seconds" );
   }
 
   /** 
