@@ -65,6 +65,26 @@ public class MazeGrid
   }
 
   /**
+   * Gets the full maze tree traversal
+   *
+   * @return full tree
+   */
+  public Tree<Coordinate> getFullRoute()
+  {
+    return fullRoute;
+  }
+
+  /**
+   * Gets the array of cells
+   *
+   * @return
+   */
+  public MazeCell[][] getCells()
+  {
+    return map;
+  }
+
+  /**
    * Tries to set the cell at the location of coord to a wall. Catches
    * Exception if coord is out of the grid. However, this should never happen.
    * returns true for a successful set. False if exception thrown
@@ -177,6 +197,7 @@ public class MazeGrid
         // know generation is done. Then exit the loop
         if(next.equals(start))
         {
+          currentRoute.initIterator();
           System.out.println("Generated");
           break;
         }
@@ -374,7 +395,10 @@ public class MazeGrid
     // recursively calls itself with the parent of its parameter until the
     // parameter is in a position where it can move
     if(start.getParent() != null && !canMove(start.getValue()))
+    {
+      start.initIterator();
       return backtrack(start.getParent());
+    }
     
     // when it has traversed up enough so that it can move or until its parent
     // is null (i.e. at root node). return the new tree
@@ -397,7 +421,15 @@ public class MazeGrid
         g2d.setColor(Color.BLACK);
 
         if(!map[i][j].isWall())
-          g2d.setColor(Color.WHITE);
+          if(map[i][j].isVisited())
+            if(map[i][j].isOnRoute())
+              g2d.setColor(Color.ORANGE);
+            else
+              g2d.setColor(Color.DARK_GRAY);
+          else
+            g2d.setColor(Color.WHITE);
+
+
         if(i == 0 && j == 0)
           g2d.setColor(Color.GREEN);
         else if(i == width - 1 && j == height - 1)
